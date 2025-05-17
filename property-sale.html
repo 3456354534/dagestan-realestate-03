@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Продажа недвижимости | Дагестан</title>
     <style>
+        
         * {
             margin: 0;
             padding: 0;
@@ -18,12 +19,13 @@
             height: 100vh;
         }
         
+        /* Навигационная панель (как у вас) */
         .nav-bar {
             background-color: #1E3A8A;
             height: 60px;
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0  20px;
             position: relative;
         }
         
@@ -53,11 +55,13 @@
             height: 70px;
         }
         
+        /* Основное содержимое */
         .main-content {
             display: flex;
             flex: 1;
         }
         
+        /* Левая панель (40%) */
         .form-panel {
             width: 40%;
             padding: 30px;
@@ -81,7 +85,8 @@
             margin-top: 10px;
         }
         
-        .type-btn, .option-btn {
+        .type-btn {
+            flex: 1;
             padding: 12px;
             background: white;
             border: 1px solid #ddd;
@@ -90,7 +95,7 @@
             text-align: center;
         }
         
-        .type-btn.selected, .option-btn.selected {
+        .type-btn.selected {
             background: #1E3A8A;
             color: white;
             border-color: #1E3A8A;
@@ -111,12 +116,33 @@
             gap: 8px;
         }
         
+        .option-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .option-btn.selected {
+            background: #1E3A8A;
+            color: white;
+        }
+        
         .price-input {
             padding: 8px 12px;
             width: 100%;
             border: 1px solid #ddd;
             border-radius: 5px;
             position: relative;
+        }
+        
+        .price-input::after {
+            content: "₽";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
         .floor-input {
@@ -136,7 +162,7 @@
         .submit-btn {
             margin-top: 30px;
             padding: 15px;
-            background: #1E3A8A;
+            background: #136e32;
             color: white;
             border: none;
             border-radius: 5px;
@@ -144,116 +170,231 @@
             cursor: pointer;
         }
         
+        /* Правая панель - карта (60%) */
         .map-panel {
             width: 60%;
             background: #e9e9e9;
             position: relative;
         }
         
-        .photo-upload-section {
-            padding: 20px 5%;
-            background: #f9f9f9;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        
-        .photos-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .photo-cell {
-            width: 120px;
-            height: 120px;
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            background: white;
-        }
-        
-        .photo-upload-btn {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            color: #666;
-        }
-        
-        .photo-cell img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .remove-photo {
+        .map-placeholder {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #1E3A8A;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 1;
-        }
-        
-        .photo-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            font-size: 10px;
-            padding: 3px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-        }
-        
-        .upload-status {
-            font-size: 14px;
-            text-align: right;
-            padding: 0 5px;
+            color: #666;
         }
     </style>
 </head>
 
 <body>
+    <!-- Навигационная панель -->
     <nav class="nav-bar">
         <div class="back-btn" onclick="window.history.back()">←</div>
         <div class="category-title">Продажа недвижимости</div>
         <img src="images/logo.png.png" alt="Логотип" class="logo-center">
     </nav>
-    
-    <div class="photo-upload-section">
-        <div class="photos-container" id="photosContainer">
-            <div class="photo-cell">
-                <label class="photo-upload-btn">
-                    <input type="file" accept="image/jpeg, image/png" style="display: none;" onchange="handlePhotoUpload(this)">
-                    <svg viewBox="0 0 24 24" class="camera-icon">
-                        <path fill="#666" d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04.32.07.64.07.97 0 2.76-2.24 5-5 5s-5-2.24-5-5c0-.33.03-.65.07-.97-.46-.25-.86-.59-1.17-.99-.1.34-.16.69-.16 1.06 0 3.5 2.85 6.35 6.35 6.35s6.35-2.85 6.35-6.35c0-.37-.06-.72-.16-1.06-.31.4-.71.74-1.17.99M12 6.5c1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5S8.5 11.93 8.5 10s1.57-3.5 3.5-3.5M5.8 11.5c-.13 0-.25.02-.38.04-.31-.4-.71-.74-1.17-.99-.04-.32-.07-.65-.07-.98C4.18 7.24 6.42 5 9.2 5c.33 0 .66.03.98.07.25-.46.59-.86.99-1.17-.34-.1-.69-.16-1.06-.16C5.65 3.65 2.8 6.5 2.8 10c0 .37.06.72.16 1.06.31-.4.71-.74 1.17-.99-.18-.03-.33-.07-.53-.07z"/>
-                    </svg>
-                    <span>Добавить фото</span>
-                </label>
-            </div>
+  <div class="photo-upload-section">
+    <div class="photos-container" id="photosContainer">
+        <!-- Ячейка для загрузки -->
+        <div class="photo-cell">
+            <label class="photo-upload-btn">
+                <input type="file" accept="image/jpeg, image/png" style="display: none;" 
+                       onchange="handlePhotoUpload(this)">
+                <svg viewBox="0 0 24 24" class="camera-icon">
+                    <path fill="#666" d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04.32.07.64.07.97 0 2.76-2.24 5-5 5s-5-2.24-5-5c0-.33.03-.65.07-.97-.46-.25-.86-.59-1.17-.99-.1.34-.16.69-.16 1.06 0 3.5 2.85 6.35 6.35 6.35s6.35-2.85 6.35-6.35c0-.37-.06-.72-.16-1.06-.31.4-.71.74-1.17.99M12 6.5c1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5S8.5 11.93 8.5 10s1.57-3.5 3.5-3.5M5.8 11.5c-.13 0-.25.02-.38.04-.31-.4-.71-.74-1.17-.99-.04-.32-.07-.65-.07-.98C4.18 7.24 6.42 5 9.2 5c.33 0 .66.03.98.07.25-.46.59-.86.99-1.17-.34-.1-.69-.16-1.06-.16C5.65 3.65 2.8 6.5 2.8 10c0 .37.06.72.16 1.06.31-.4.71-.74 1.17-.99-.18-.03-.33-.07-.53-.07z"/>
+                </svg>
+                <span>Добавить фото</span>
+            </label>
         </div>
-        <div class="upload-status" id="uploadStatus"></div>
     </div>
+    <div class="upload-status" id="uploadStatus"></div>
+</div>
 
+<script>
+// Конфигурация
+const MAX_PHOTOS = 20;
+const MAX_FILE_SIZE_MB = 50;
+let uploadedPhotos = 0;
+
+// Обработка загрузки
+function handlePhotoUpload(input) {
+    const files = input.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    
+    // Проверка размера
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        showError(`Файл слишком большой (макс. ${MAX_FILE_SIZE_MB}MB)`);
+        return;
+    }
+
+    // Проверка типа
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        showError('Только JPG/PNG изображения');
+        return;
+    }
+
+    // Лимит фото
+    if (uploadedPhotos >= MAX_PHOTOS) {
+        showError(`Максимум ${MAX_PHOTOS} фото`);
+        return;
+    }
+
+    // Создаем превью
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const container = document.getElementById('photosContainer');
+        
+        // Ячейка для фото
+        const photoCell = document.createElement('div');
+        photoCell.className = 'photo-cell';
+        photoCell.innerHTML = `
+            <img src="${e.target.result}" alt="Фото объекта">
+            <div class="remove-photo" onclick="removePhoto(this)">×</div>
+            <div class="photo-info">
+                ${(file.size/1024/1024).toFixed(1)}MB<br>
+                ${file.type.split('/')[1].toUpperCase()}
+            </div>
+        `;
+        
+        // Добавляем перед кнопкой
+        container.insertBefore(photoCell, container.lastChild);
+        uploadedPhotos++;
+        
+        // Обновляем статус
+        updateUploadStatus();
+        
+        // Показываем кнопку если есть место
+        if (uploadedPhotos < MAX_PHOTOS) {
+            container.lastChild.style.display = 'flex';
+        } else {
+            container.lastChild.style.display = 'none';
+        }
+    }
+    reader.readAsDataURL(file);
+}
+
+// Удаление фото
+function removePhoto(element) {
+    element.parentElement.remove();
+    uploadedPhotos--;
+    
+    const container = document.getElementById('photosContainer');
+    container.lastChild.style.display = 'flex';
+    updateUploadStatus();
+}
+
+// Обновление статуса
+function updateUploadStatus() {
+    const status = document.getElementById('uploadStatus');
+    status.textContent = `${uploadedPhotos}/${MAX_PHOTOS} фото · макс. ${MAX_FILE_SIZE_MB}MB`;
+    status.style.color = uploadedPhotos === 0 ? '#ff4444' : '#1E3A8A';
+}
+
+// Показ ошибок
+function showError(message) {
+    const status = document.getElementById('uploadStatus');
+    status.textContent = `Ошибка: ${message}`;
+    status.style.color = '#ff4444';
+    setTimeout(() => updateUploadStatus(), 3000);
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', updateUploadStatus);
+</script>
+
+<style>
+/* Стили для загрузки фото */
+.photo-upload-section {
+    padding: 20px 5%;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.photos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.photo-cell {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    background: white;
+}
+
+.photo-upload-btn {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+}
+
+.photo-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-photo {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #1E3A8A;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+}
+    /* Фикс для навбара */
+    .nav-bar {
+        height: 70px !important; /* Фиксированная высота */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Добавляем тень */
+    }
+.photo-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-size: 10px;
+    padding: 3px;
+    text-align: center;
+}
+
+.upload-status {
+    font-size: 14px;
+    text-align: right;
+    padding: 0 5px;
+}
+</style>
+</script>
+    <!-- Основное содержимое -->
     <div class="main-content">
+        <!-- Левая панель - форма -->
         <div class="form-panel">
             <h2>Адрес объекта</h2>
-            <input type="text" id="address-input" class="address-input" placeholder="Введите адрес в Дагестане">
+            <input type="text" class="address-input" placeholder="Введите адрес в Дагестане">
             
             <h2>Тип недвижимости</h2>
             <div class="type-buttons">
@@ -262,6 +403,7 @@
                 <div class="type-btn" onclick="selectType(this, 'land')">Земельный участок</div>
             </div>
             
+            <!-- Форма для жилой недвижимости -->
             <div id="residential-form">
                 <div class="form-row">
                     <h3>Вид жилья</h3>
@@ -300,98 +442,27 @@
             <button class="submit-btn" onclick="submitForm()">Создать объявление</button>
         </div>
         
-        <div class="map-panel" id="map"></div>
+        <!-- Правая панель - карта -->
+        <div class="map-panel">
+            <div class="map-placeholder">
+                Здесь будет карта Дагестана<br>
+                с отметкой вашего адреса
+            </div>
+        </div>
     </div>
 
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=70cadccb-57ed-41b2-be55-477e25bbe85b&lang=ru_RU"></script>
-<script src="https://yandex.github.io/suggest-api-v1/widget/v1/widget.js"></script>
     <script>
-        // Конфигурация фото
-        const MAX_PHOTOS = 20;
-        const MAX_FILE_SIZE_MB = 50;
-        let uploadedPhotos = 0;
-
-        // Функции для работы с фото
-        function handlePhotoUpload(input) {
-            const files = input.files;
-            if (!files || files.length === 0) return;
-
-            const file = files[0];
-            
-            if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-                showError(`Файл слишком большой (макс. ${MAX_FILE_SIZE_MB}MB)`);
-                return;
-            }
-
-            if (!['image/jpeg', 'image/png'].includes(file.type)) {
-                showError('Только JPG/PNG изображения');
-                return;
-            }
-
-            if (uploadedPhotos >= MAX_PHOTOS) {
-                showError(`Максимум ${MAX_PHOTOS} фото`);
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const container = document.getElementById('photosContainer');
-                
-                const photoCell = document.createElement('div');
-                photoCell.className = 'photo-cell';
-                photoCell.innerHTML = `
-                    <img src="${e.target.result}" alt="Фото объекта">
-                    <div class="remove-photo" onclick="removePhoto(this)">×</div>
-                    <div class="photo-info">
-                        ${(file.size/1024/1024).toFixed(1)}MB<br>
-                        ${file.type.split('/')[1].toUpperCase()}
-                    </div>
-                `;
-                
-                container.insertBefore(photoCell, container.lastChild);
-                uploadedPhotos++;
-                
-                updateUploadStatus();
-                
-                if (uploadedPhotos < MAX_PHOTOS) {
-                    container.lastChild.style.display = 'flex';
-                } else {
-                    container.lastChild.style.display = 'none';
-                }
-            }
-            reader.readAsDataURL(file);
-        }
-
-        function removePhoto(element) {
-            element.parentElement.remove();
-            uploadedPhotos--;
-            
-            const container = document.getElementById('photosContainer');
-            container.lastChild.style.display = 'flex';
-            updateUploadStatus();
-        }
-
-        function updateUploadStatus() {
-            const status = document.getElementById('uploadStatus');
-            status.textContent = `${uploadedPhotos}/${MAX_PHOTOS} фото · макс. ${MAX_FILE_SIZE_MB}MB`;
-            status.style.color = uploadedPhotos === 0 ? '#ff4444' : '#1E3A8A';
-        }
-
-        function showError(message) {
-            const status = document.getElementById('uploadStatus');
-            status.textContent = `Ошибка: ${message}`;
-            status.style.color = '#ff4444';
-            setTimeout(() => updateUploadStatus(), 3000);
-        }
-
-        // Функции для формы
+        // Выбор типа недвижимости
         function selectType(element, type) {
             document.querySelectorAll('.type-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
             element.classList.add('selected');
+            
+            // Здесь можно скрывать/показывать формы для разных типов
         }
         
+        // Выбор опции (вид жилья, комнаты)
         function selectOption(element) {
             const parent = element.parentElement;
             parent.querySelectorAll('.option-btn').forEach(btn => {
@@ -399,150 +470,30 @@
             });
             element.classList.add('selected');
         }
-
-        // Функции для карты
-        function initMap() {
-            const map = new ymaps.Map("map", {
-                center: [42.98, 47.50],
-                zoom: 10
-            });
-
-            window.yamapsMap = map;
-
-            map.events.add('click', function(e) {
-                const coords = e.get('coords');
-                
-                ymaps.geocode(coords).then(function(res) {
-                    const address = res.geoObjects.get(0).getAddressLine();
-                    document.querySelector('.address-input').value = address;
-                    
-                    map.geoObjects.removeAll();
-                    
-                    const marker = new ymaps.Placemark(coords, {
-                        balloonContent: address
-                    });
-                    map.geoObjects.add(marker);
-                });
-            });
-        }
-
-        function searchAddress(address) {
-            if (!window.yamapsMap) {
-                alert("Карта не загрузилась. Обновите страницу.");
-                return;
-            }
-
-            window.yamapsMap.geoObjects.removeAll();
-
-            ymaps.geocode(address, { results: 1 }).then(function(res) {
-                const firstResult = res.geoObjects.get(0);
-                if (!firstResult) {
-                    alert("Адрес не найден. Уточните название.");
-                    return;
-                }
-
-                const coords = firstResult.geometry.getCoordinates();
-                const foundAddress = firstResult.getAddressLine();
-
-                const marker = new ymaps.Placemark(coords, {
-                    balloonContent: foundAddress
-                }, {
-                    preset: 'islands#blueHomeIcon'
-                });
-
-                window.yamapsMap.geoObjects.add(marker);
-                window.yamapsMap.setCenter(coords, 15);
-                document.querySelector('.address-input').value = foundAddress;
-            }).catch(function(error) {
-                alert("Ошибка при поиске адреса: " + error.message);
-            });
-        }
-
-        // Функции для объявлений
+        
+        // Отправка формы
         function submitForm() {
-            const address = document.querySelector('.address-input').value;
-            const price = document.querySelector('.price-input').value;
-            const category = document.querySelector('.type-btn.selected').textContent;
-            const type = document.querySelector('#residential-form .option-btn.selected').textContent;
-            const rooms = document.querySelectorAll('#residential-form .option-buttons')[1].querySelector('.selected').textContent;
-            const currentFloor = document.querySelector('.floor-input input:first-child').value;
-            const totalFloors = document.querySelector('.floor-input input:last-child').value;
-            const photos = getUploadedPhotos();
-
-            if (!address || !price || photos.length === 0) {
-                alert("Заполните адрес, цену и добавьте хотя бы одно фото!");
-                return;
-            }
-
-            if (!window.yamapsMap || window.yamapsMap.geoObjects.getLength() === 0) {
-                alert("Укажите адрес на карте!");
-                return;
-            }
-
-            const coords = window.yamapsMap.geoObjects.get(0).geometry.getCoordinates();
-
-            const newAd = {
-                id: Date.now(),
+            const data = {
                 type: "Продажа",
-                category: category,
-                propertyType: type,
-                rooms: rooms,
-                price: price + " ₽",
-                address: address,
-                floor: `${currentFloor}/${totalFloors}`,
-                photos: photos,
-                coords: coords,
-                timestamp: new Date().toISOString()
+                category: "Жилая",
+                address: document.querySelector('.address-input').value,
+                propertyType: document.querySelector('#residential-form .option-buttons:nth-child(1) .selected').textContent,
+                rooms: document.querySelector('#residential-form .option-buttons:nth-child(2) .selected').textContent,
+                price: document.querySelector('.price-input').value,
+                floor: document.querySelectorAll('.floor-input input')[0].value + "/" + 
+                      document.querySelectorAll('.floor-input input')[1].value
             };
-            // Сохраняем только если это жилая недвижимость
-            if (category === "Жилая") {
-                saveAdToStorage(newAd);
-                alert("Объявление создано! Оно появится в разделе жилой недвижимости.");
-                window.location.href = "property.html";
-            } else {
-                alert("Объявление создано, но будет доступно только для соответствующего раздела.");
-            }
-        }
-
-        function saveAdToStorage(ad) {
-            let ads = JSON.parse(localStorage.getItem('residentialProperties') || '[]');
-            ads.push(ad);
-            localStorage.setItem('residentialProperties', JSON.stringify(ads));
-            console.log("Объявление сохранено:", ad);
-        }
-
-
-        function getUploadedPhotos() {
-            const photos = [];
-            document.querySelectorAll('.photo-cell img').forEach(img => {
-                photos.push(img.src);
-            });
-            return photos;
-        }
-
-        function saveAdToStorage(ad) {
-            let ads = JSON.parse(localStorage.getItem('propertyAds') || '[]');
-            ads.push(ad);
-            localStorage.setItem('propertyAds', JSON.stringify(ads));
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            updateUploadStatus();
-            ymaps.ready(initMap);
             
-            ymaps.ready(function() {
-                const suggestView = new ymaps.SuggestView('address-input', {
-                    offset: [0, 5],
-                    boundedBy: [[41.5, 46.5], [43.5, 48.5]]
-                });
-
-                suggestView.events.add('select', function(e) {
-                    const address = e.get('item').value;
-                    searchAddress(address);
-                });
-            });
-        });
+            console.log("Данные для отправки:", data);
+            
+            // Временное сохранение в localStorage
+            let listings = JSON.parse(localStorage.getItem('listings') || '[]');
+            listings.push(data);
+            localStorage.setItem('listings', JSON.stringify(listings));
+            
+            alert("Объявление создано! Объект появится в разделе жилой недвижимости.");
+            window.location.href = "main.html";
+        }
     </script>
 </body>
 </html>

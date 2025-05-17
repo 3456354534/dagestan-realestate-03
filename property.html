@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Жилая недвижимость | Дагестан Недвижимость</title>
+    <title>Жилая недвижимости  | Дагестан Недвижимость</title>
     <style>
         * {
             margin: 0;
@@ -85,24 +85,15 @@
         
         .filter-toggle {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             padding: 15px;
             cursor: pointer;
             background: #f5f5f5;
         }
         
-        .search-btn {
-            background: #1E3A8A;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
         .filter-content {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             padding: 15px;
         }
@@ -149,104 +140,76 @@
             overflow: hidden;
         }
         
-        /* Карта (60%) */
         .map-container {
             width: 60%;
-            height: 100%;
+            background: #e9e9e9;
             position: relative;
         }
         
-        #map {
-            width: 100%;
-            height: 100%;
+        .map-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
         }
         
-        /* Список объявлений (40%) */
         .properties-sidebar {
             width: 40%;
             overflow-y: auto;
             padding: 15px;
             background: white;
-            border-left: 1px solid #ddd;
         }
         
-        /* Стили для карточек объявлений */
         .property-card {
             margin-bottom: 20px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 5px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.3s;
         }
         
-        .property-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .property-image {
+        .property-card img {
             width: 100%;
             height: 180px;
             object-fit: cover;
         }
         
-        .property-details {
+        .property-info {
             padding: 15px;
         }
         
-        .property-title {
-            font-size: 18px;
+        .property-info h3 {
             margin-bottom: 5px;
-            color: #1E3A8A;
-        }
-        
-        .property-address {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 8px;
         }
         
         .property-price {
+            color: #1E3A8A;
             font-weight: bold;
-            font-size: 20px;
-            color: #136e32;
+            font-size: 18px;
             margin: 10px 0;
-        }
-        
-        .property-meta {
-            display: flex;
-            justify-content: space-between;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .no-properties {
-            text-align: center;
-            color: #666;
-            padding: 20px;
         }
     </style>
 </head>
 <body>
     <!-- Навигационная панель -->
     <nav class="nav-bar">
-        <div class="back-btn" onclick="window.history.back()">←</div>
-        <div class="category-title">Жилая недвижимость</div>
+        <div class="back-btn" onclick="window.history.back()">
+            ←
+        </div>
+        <div class="category-title">Жилая недвижимость </div>
         <img src="images/logo.png.png" alt="Логотип" class="logo-center">
     </nav>
     
     <!-- Поиск и фильтры -->
     <div class="search-filter-container">
         <div class="search-box">
-            <input type="text" id="address-input" class="search-input" placeholder="Поиск по городу...">
+            <input type="text" class="search-input" placeholder="Поиск по городу...">
         </div>
         
         <div class="filter-container" id="filterContainer">
             <div class="filter-toggle" onclick="toggleFilters()">
                 <span id="toggleArrow">▼</span> Фильтры
-                <div class="search-btn" onclick="applyFilters()">Поиск</div>
             </div>
             
             <div class="filter-content" id="filterContent">
@@ -264,14 +227,23 @@
                     <div class="filter-option" onclick="selectOption(this)">2-х комнатная</div>
                     <div class="filter-option" onclick="selectOption(this)">3-х комнатная</div>
                     <div class="filter-option" onclick="selectOption(this)">4+ комнаты</div>
+                    <div class="filter-option" onclick="selectOption(this)">Свободная планировка</div>
                 </div>
                 
                 <!-- Колонка 3: Цена -->
                 <div class="filter-column">
                     <div class="price-inputs">
-                        <input type="number" placeholder="Цена от" id="priceFrom">
-                        <input type="number" placeholder="Цена до" id="priceTo">
+                        <input type="number" placeholder="Цена от">
+                        <input type="number" placeholder="Цена до">
                     </div>
+                </div>
+                
+                <!-- Колонка 4: Этаж -->
+                <div class="filter-column">
+                    <div class="filter-option selected" onclick="selectOption(this)">Неважно</div>
+                    <div class="filter-option" onclick="selectOption(this)">Не последний</div>
+                    <div class="filter-option" onclick="selectOption(this)">Не первый</div>
+                    <div class="filter-option" onclick="selectOption(this)">Конкретный этаж</div>
                 </div>
             </div>
         </div>
@@ -281,197 +253,19 @@
     <div class="main-content">
         <!-- Карта (60%) -->
         <div class="map-container">
-            <div id="map"></div>
+            <div class="map-placeholder">
+                Здесь будет карта с метками<br>
+                (Яндекс.Карты/Google Maps)
+            </div>
         </div>
         
         <!-- Список объектов (40%) -->
         <div class="properties-sidebar" id="propertiesList">
-            <div class="no-properties">Загрузка объявлений...</div>
+            <!-- Карточки будут добавляться через JS -->
         </div>
     </div>
-
-    <!-- Подключаем API Яндекс.Карт -->
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=70cadccb-57ed-41b2-be55-477e25bbe85b&lang=ru_RU"></script>
-<script src="https://yandex.github.io/suggest-api-v1/widget/v1/widget.js"></script>
+    
     <script>
-        // Глобальные переменные
-        let map;
-        let placemarks = [];
-        let currentProperties = [];
-
-        // Инициализация карты
-        function initMap() {
-            map = new ymaps.Map("map", {
-                center: [42.98, 47.50], // Центр Дагестана
-                zoom: 10,
-                controls: ['zoomControl']
-            });
-
-            // Загружаем объявления при инициализации карты
-            loadProperties();
-        }
-
-        // Загрузка объявлений из localStorage
-        function loadProperties() {
-            const propertiesList = document.getElementById('propertiesList');
-            
-            // Получаем объявления из localStorage
-            const ads = JSON.parse(localStorage.getItem('residentialProperties')) || [];
-             console.log("Загружены объявления:", ads); 
-            
-            if (ads.length === 0) {
-                propertiesList.innerHTML = '<div class="no-properties">Нет доступных объявлений</div>';
-                return;
-            }
-            
-            // Очищаем список и карту
-            propertiesList.innerHTML = '';
-            map.geoObjects.removeAll();
-            
-            // Добавляем каждое объявление
-            ads.forEach(ad => {
-                 // Проверяем структуру объявления
-        console.log("Обрабатываю объявление:", ad);
-                // Создаем карточку объявления
-                const propertyElement = document.createElement('div');
-                propertyElement.className = 'property-card';
-                propertyElement.innerHTML = `
-                    <img src="${ad.photos[0]}" alt="${ad.propertyType}" class="property-image" onerror="this.src='https://via.placeholder.com/300x180?text=Нет+фото'">
-                    <div class="property-details">
-                        <h3 class="property-title">${ad.propertyType}, ${ad.rooms}</h3>
-                        <div class="property-address">${ad.address}</div>
-                        <div class="property-price">${ad.price}</div>
-                        <div class="property-meta">
-                            <span>Этаж: ${ad.floor}</span>
-                            <span>${new Date(ad.timestamp).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                `;
-                
-                // При клике на карточку центрируем карту на этом объявлении
-                propertyElement.addEventListener('click', function() {
-                    map.setCenter(ad.coords, 15);
-                    
-                    // Подсвечиваем выбранное объявление
-                    document.querySelectorAll('.property-card').forEach(card => {
-                        card.style.border = '1px solid #ddd';
-                    });
-                    propertyElement.style.border = '2px solid #1E3A8A';
-                });
-                
-                propertiesList.appendChild(propertyElement);
-                
-                // Добавляем метку на карту
-                const placemark = new ymaps.Placemark(ad.coords, {
-                    balloonContent: `
-                        <strong>${ad.propertyType}, ${ad.rooms}</strong><br>
-                        ${ad.address}<br>
-                        <strong>${ad.price}</strong><br>
-                        Этаж: ${ad.floor}
-                    `
-                }, {
-                    preset: 'islands#redDotIcon',
-                    iconColor: '#ff0000'
-                });
-                
-                // При клике на метку прокручиваем к соответствующему объявлению
-                placemark.events.add('click', function() {
-                    propertyElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    propertyElement.style.border = '2px solid #1E3A8A';
-                });
-                
-                map.geoObjects.add(placemark);
-                placemarks.push(placemark);
-            });
-        }
-
-        // Фильтрация объявлений
-        function applyFilters() {
-            const typeFilter = document.querySelector('.filter-column:nth-child(1) .selected').textContent;
-            const roomsFilter = document.querySelector('.filter-column:nth-child(2) .selected').textContent;
-            const priceFrom = document.getElementById('priceFrom').value;
-            const priceTo = document.getElementById('priceTo').value;
-            
-            const filtered = currentProperties.filter(ad => {
-                // Фильтр по типу
-                if (typeFilter !== 'Все' && ad.propertyType !== typeFilter) return false;
-                
-                // Фильтр по комнатам
-                if (roomsFilter !== 'Студия' && roomsFilter !== 'Все') {
-                    if (roomsFilter === '4+ комнаты') {
-                        if (!ad.rooms.includes('4') && !ad.rooms.includes('5') && !ad.rooms.includes('6')) return false;
-                    } else if (ad.rooms !== roomsFilter) {
-                        return false;
-                    }
-                }
-                
-                // Фильтр по цене
-                const priceNum = parseInt(ad.price.replace(/\D/g, ''));
-                if (priceFrom && priceNum < parseInt(priceFrom)) return false;
-                if (priceTo && priceNum > parseInt(priceTo)) return false;
-                
-                return true;
-            });
-            
-            // Обновляем отображение
-            updatePropertiesDisplay(filtered);
-            
-            // Сворачиваем фильтры
-            document.getElementById('filterContainer').style.height = '60px';
-            document.getElementById('toggleArrow').textContent = '▼';
-        }
-
-        // Обновление отображения объявлений
-        function updatePropertiesDisplay(properties) {
-            const propertiesList = document.getElementById('propertiesList');
-            
-            if (properties.length === 0) {
-                propertiesList.innerHTML = '<div class="no-properties">Нет объявлений по выбранным фильтрам</div>';
-                map.geoObjects.removeAll();
-                return;
-            }
-            
-            propertiesList.innerHTML = '';
-            map.geoObjects.removeAll();
-            
-            properties.forEach(ad => {
-                const propertyElement = document.createElement('div');
-                propertyElement.className = 'property-card';
-                propertyElement.innerHTML = `
-                    <img src="${ad.photos[0]}" alt="${ad.propertyType}" class="property-image" onerror="this.src='https://via.placeholder.com/300x180?text=Нет+фото'">
-                    <div class="property-details">
-                        <h3 class="property-title">${ad.propertyType}, ${ad.rooms}</h3>
-                        <div class="property-address">${ad.address}</div>
-                        <div class="property-price">${ad.price}</div>
-                        <div class="property-meta">
-                            <span>Этаж: ${ad.floor}</span>
-                            <span>${new Date(ad.timestamp).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                `;
-                
-                propertyElement.addEventListener('click', function() {
-                    map.setCenter(ad.coords, 15);
-                });
-                
-                propertiesList.appendChild(propertyElement);
-                
-                // Добавляем метку на карту
-                const placemark = new ymaps.Placemark(ad.coords, {
-                    balloonContent: `
-                        <strong>${ad.propertyType}, ${ad.rooms}</strong><br>
-                        ${ad.address}<br>
-                        <strong>${ad.price}</strong>
-                    `
-                }, {
-                    preset: 'islands#redDotIcon',
-                    iconColor: '#ff0000'
-                });
-                
-                map.geoObjects.add(placemark);
-            });
-        }
-
         // Переключение фильтров
         function toggleFilters() {
             const container = document.getElementById('filterContainer');
@@ -488,53 +282,89 @@
         
         // Выбор опции фильтра
         function selectOption(element) {
+            // Снимаем выделение со всех в колонке
             const parent = element.parentElement;
             parent.querySelectorAll('.filter-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
-            element.classList.add('selected');
-        }
-
-        // Поиск адреса
-        function searchAddress(address) {
-            if (!address) return;
             
-            ymaps.geocode(address, {
-                results: 1,
-                boundedBy: map.getBounds()
-            }).then(function(res) {
-                const firstGeoObject = res.geoObjects.get(0);
-                if (!firstGeoObject) {
-                    alert('Адрес не найден');
-                    return;
+            // Выделяем текущий
+            element.classList.add('selected');
+            
+            // Автоматическое скрытие после выбора
+            setTimeout(() => {
+                if (areAllFiltersSelected()) {
+                    document.getElementById('filterContainer').style.height = '60px';
+                    document.getElementById('toggleArrow').textContent = '▼';
                 }
-
-                const coords = firstGeoObject.geometry.getCoordinates();
-                map.setCenter(coords, 15);
+            }, 300);
+            
+            // Фильтрация
+            filterProperties();
+        }
+        
+        // Проверка, что все фильтры выбраны
+        function areAllFiltersSelected() {
+            const columns = document.querySelectorAll('.filter-column');
+            for (let column of columns) {
+                if (!column.querySelector('.selected')) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Загрузка объектов (заглушка)
+        function loadProperties() {
+            const list = document.getElementById('propertiesList');
+            list.innerHTML = '';
+            
+            // В реальном проекте здесь будет загрузка из базы данных
+            const properties = [
+                { id: 1, type: "Новостройки", rooms: "2-х комнатная", price: "4.5 млн", address: "ул. Гамидова, 45", area: "65 м²" },
+                { id: 2, type: "Вторичное", rooms: "3-х комнатная", price: "6.2 млн", address: "пр. Акушинского, 12", area: "85 м²" },
+                { id: 3, type: "Новостройки", rooms: "1-комнатная", price: "3.1 млн", address: "ул. Коркмасова, 78", area: "45 м²" }
+            ];
+            
+            properties.forEach(prop => {
+                list.innerHTML += `
+                    <div class="property-card">
+                        <img src="assets/property${prop.id}.jpg" alt="${prop.type}">
+                        <div class="property-info">
+                            <h3>${prop.type}, ${prop.rooms}</h3>
+                            <p>${prop.address}</p>
+                            <p>Площадь: ${prop.area}</p>
+                            <div class="property-price">${prop.price} ₽</div>
+                        </div>
+                    </div>
+                `;
             });
         }
-
-        // Инициализация при загрузке страницы
-        ymaps.ready(initMap);
         
-        document.addEventListener('DOMContentLoaded', function() {
+        // Фильтрация (заглушка)
+        function filterProperties() {
+            console.log('Применены фильтры:');
+            console.log('Тип:', document.querySelector('.filter-column:nth-child(1) .selected').textContent);
+            console.log('Комнаты:', document.querySelector('.filter-column:nth-child(2) .selected').textContent);
+            
+            // В реальном проекте здесь будет AJAX-запрос с параметрами фильтрации
+            loadProperties();
+        }
+        
+        // Инициализация
+        window.onload = function() {
+            loadProperties();
             // Сворачиваем фильтры по умолчанию
             document.getElementById('filterContainer').style.height = '60px';
             
-            // Поиск по Enter
-            document.getElementById('address-input').addEventListener('keypress', function(e) {
+            // Для поиска по городу
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    searchAddress(this.value);
+                    alert('Поиск по городу: ' + this.value);
+                    // Здесь будет реализация поиска на карте
                 }
             });
-            
-            // Подсказки адресов
-            ymaps.ready(function() {
-                new ymaps.SuggestView('address-input', {
-                    boundedBy: [[41.5, 46.5], [43.5, 48.5]] // Границы Дагестана
-                });
-            });
-        });
+        };
     </script>
 </body>
 </html>
